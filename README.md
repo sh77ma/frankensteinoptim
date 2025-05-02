@@ -24,13 +24,13 @@ The Frankenstein optimizer aims to combine the advantages of various adaptive gr
 
 ## Key Features (based on the paper)
 
-✨ Dynamically adapts its internal coefficients during training:
+Dynamically adapts its internal coefficients during training:
 
 *   **Adaptive First Momentum Coefficient (`β₁`):** Adjusts based on the learning rate, unlike the fixed `β₁` in Adam.
 *   **Dynamic Second Moment EMA (`β₂`):** Adapts based on the ratio of current to past squared gradients and the alignment between momentum and current gradient.
 *   **Max-based Second Moment Normalization (`v̂`):** Uses the maximum observed squared gradient (similar to AMSGrad) for parameter update normalization, potentially enhancing stability.
 
-✨ Incorporates novel factors for fine-grained control:
+Incorporates novel factors for fine-grained control:
 
 *   **Nonlinear Misalignment Factor (`P`):** Quantifies the misalignment between the previous momentum and current gradient.
 *   **Adaptive Coefficient (`ρ`):** Modulates the momentum update based on gradient magnitude and the misalignment factor `P`.
@@ -95,29 +95,52 @@ for epoch in range(num_epochs):
     # Add validation, saving, etc. as needed
     # ...
 ```
-Parameters
-The Frankenstein optimizer accepts the following parameters during initialization:
+## Parameters
 
-params (iterable): Iterable of parameters to optimize or dicts defining parameter groups.
+The `Frankenstein` optimizer class accepts the following arguments during initialization:
 
-lr (float, optional): Learning rate (αₜ in the paper). Default: 1e-3.
+*   `params` (`iterable`):
+    Iterable of parameters (usually `model.parameters()`) to optimize or a list of dicts defining separate parameter groups (e.g., for different learning rates).
 
-beta1_default (float, optional): Used only to derive the 0.1 factor for β₁ calculation (as 1 - beta1_default). Not the actual momentum coefficient. Default: 0.9.
+*   `lr` (`float`, *optional*):
+    Learning rate (denoted as αₜ in the paper's algorithm). Controls the overall step size.
+    *Default: `1e-3`*
 
-eps (float, optional): Small term added for numerical stability. Default: 1e-8.
+*   `beta1_default` (`float`, *optional*):
+    A coefficient used *only* to determine the reference factor (typically 0.1) for the adaptive β₁ calculation, via the formula `1 - beta1_default`. It is **not** the direct momentum coefficient β₁.
+    *Default: `0.9` (implying a factor of 0.1)*
 
-clip_beta1_lower (float, optional): Lower clip bound for the term 0.1 * sqrt(αₜ / α₀) used in β₁ calculation. Default: 0.05.
+*   `eps` (`float`, *optional*):
+    A small constant added to denominators and squared gradients (χₜ) to prevent division by zero and improve numerical stability.
+    *Default: `1e-8`*
 
-clip_beta1_upper (float, optional): Upper clip bound for the term 0.1 * sqrt(αₜ / α₀) used in β₁ calculation. Default: 0.99.
+*   `clip_beta1_lower` (`float`, *optional*):
+    The lower bound applied to the term `(1 - beta1_default) * sqrt(αₜ / α₀)` *before* calculating the final adaptive β₁. Corresponds to the lower clip value in Algorithm 1, line 6.
+    *Default: `0.05`*
 
-clip_rho_lower (float, optional): Lower clip bound for the input to log in the calculation of ρ. Must be > 0. Default: math.exp(0.8).
+*   `clip_beta1_upper` (`float`, *optional*):
+    The upper bound applied to the term `(1 - beta1_default) * sqrt(αₜ / α₀)` *before* calculating the final adaptive β₁. Corresponds to the upper clip value in Algorithm 1, line 6. Must be `< 1.0`.
+    *Default: `0.99`*
 
-clip_rho_upper (float, optional): Upper clip bound for the input to log in the calculation of ρ. Default: math.exp(1.05).
+*   `clip_rho_lower` (`float`, *optional*):
+    The lower bound applied to the *input* of the `log` function when calculating the adaptive coefficient ρ (parameter `p` in Algorithm 1, line 9). Must be strictly greater than 0. Corresponds to the lower clip value `exp(0.8)` in Algorithm 1.
+    *Default: `math.exp(0.8)`*
 
-beta1_ref_lr (float, optional): Reference learning rate (α₀) used for β₁ adaptation. Default: 1e-3.
+*   `clip_rho_upper` (`float`, *optional*):
+    The upper bound applied to the *input* of the `log` function when calculating the adaptive coefficient ρ. Corresponds to the upper clip value `exp(1.05)` in Algorithm 1.
+    *Default: `math.exp(1.05)`*
 
-Citation
-If you use this optimizer or find the paper useful, please cite the original work:
+*   `beta1_ref_lr` (`float`, *optional*):
+    The reference learning rate (α₀ in Eq. 3, value `10^-3` used in Algorithm 1, line 6) used in the adaptive β₁ calculation.
+    *Default: `1e-3`*
+
+---
+
+## Citation
+
+If you use this optimizer implementation or find the original paper useful in your research, please consider citing the paper:
+
+```bibtex
 @misc{hsu2025frankenstein,
       title={Frankenstein Optimizer: Harnessing the Potential by Revisiting Optimization Tricks},
       author={Chia-Wei Hsu and Nien-Ti Tsou and Yu-Cheng Chen and Yang Jeong Park and Ju Li},
@@ -126,10 +149,10 @@ If you use this optimizer or find the paper useful, please cite the original wor
       archivePrefix={arXiv},
       primaryClass={cs.LG}
 }
-
+```
 
 License
-This specific implementation is released under the MIT License.
+This specific implementation is released under the MIT License. Please see the LICENSE file for details.
 
 Acknowledgements
-Credit goes to the authors of the original paper for developing the Frankenstein optimizer algorithm. This implementation aims to faithfully reproduce Algorithm 1 from their work.
+Deep gratitude to the authors of the original paper for developing the Frankenstein optimizer algorithm. This implementation is an effort to faithfully reproduce Algorithm 1 from their work for the benefit of the community.
