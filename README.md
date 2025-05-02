@@ -17,8 +17,11 @@ This repository provides a PyTorch implementation of the **Frankenstein Optimize
 ---
 
 ## Overview
+A while ago, I came across an article discussing the Frankenstein Optimizer.The Frankenstein optimizer aims to combine the advantages of various adaptive gradient-based methods. It dynamically adjusts its internal parameters based on the current state of the optimization process, potentially leading to faster convergence and improved generalization compared to optimizers like Adam or SGD in certain scenarios. The article did not provide the original code for the optimizer, so I developed my own implementation based on the description of the algorithm in the article. While my implementation may not be perfect, it has several advantages over AdamW and other similar optimizers, including faster convergence and better generalization due to its learnable and adjustable parameters.
+My implementation is available for use and I invite users to report any bugs or issues they may encounter. I have successfully used this implementation in certain ViT-like models for computer vision applications. However, it should be noted that the search for local minima and resulting landscapes differ from those of AdamW and SophiaG.
 
-The Frankenstein optimizer aims to combine the advantages of various adaptive gradient-based methods. It dynamically adjusts its internal parameters based on the current state of the optimization process, potentially leading to faster convergence and improved generalization compared to optimizers like Adam or SGD in certain scenarios.
+
+
 
 ---
 
