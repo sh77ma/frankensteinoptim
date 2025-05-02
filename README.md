@@ -28,8 +28,8 @@ The Frankenstein optimizer aims to combine the advantages of various adaptive gr
 
 1.  Clone this repository:
     ```bash
-    git clone <https://github.com/sh77ma/frankensteinoptim>
-    cd <frankensteinoptim>
+    git clone https://github.com/sh77ma/frankensteinoptim
+    cd frankensteinoptim
     ```
 2.  Ensure you have PyTorch installed (`torch >= 1.8` recommended, though might work with earlier versions).
 3.  Place the `frankenstein_optimizer.py` file in your project directory or a location accessible by your Python path.
