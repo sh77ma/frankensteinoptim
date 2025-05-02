@@ -10,7 +10,7 @@ This repository provides a PyTorch implementation of the **Frankenstein Optimize
 >
 > *arXiv: 2503.02147v1 [cs.LG] 4 Mar 2025*
 >
-> *Link: [https://arxiv.org/abs/2503.02147](https://arxiv.org/abs/2503.02147)* (Note: Link might become active later)
+> *Link: [https://arxiv.org/abs/2503.02147](https://arxiv.org/abs/2503.02147)* 
 
 **Disclaimer:** This is an unofficial implementation created based on Algorithm 1 described in the paper. It aims for functional equivalence but may differ in minor details or optimizations.
 
