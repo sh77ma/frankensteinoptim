@@ -78,7 +78,7 @@ for epoch in range(num_epochs):
 
     # Optional: Validation loop, saving checkpoints, etc.
     # ...
-```python
+```
 Parameters
 The Frankenstein optimizer accepts the following parameters during initialization:
 
