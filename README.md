@@ -4,79 +4,95 @@
 
 This repository provides a PyTorch implementation of the **Frankenstein Optimizer**, based on the paper:
 
-**Frankenstein Optimizer: Harnessing the Potential by Revisiting Optimization Tricks**
-*Authors: Chia-Wei Hsu, Nien-Ti Tsou, Yu-Cheng Chen, Yang Jeong Park, Ju Li*
-*arXiv: 2503.02147v1 [cs.LG] 4 Mar 2025*
-*Link: [https://arxiv.org/abs/2503.02147](https://arxiv.org/abs/2503.02147)* (Note: Link might become active later)
+> **Frankenstein Optimizer: Harnessing the Potential by Revisiting Optimization Tricks**
+>
+> *Authors: Chia-Wei Hsu, Nien-Ti Tsou, Yu-Cheng Chen, Yang Jeong Park, Ju Li*
+>
+> *arXiv: 2503.02147v1 [cs.LG] 4 Mar 2025*
+>
+> *Link: [https://arxiv.org/abs/2503.02147](https://arxiv.org/abs/2503.02147)* (Note: Link might become active later)
 
-**Disclaimer:** This is an unofficial implementation created based on the algorithm described in the paper.
+**Disclaimer:** This is an unofficial implementation created based on Algorithm 1 described in the paper. It aims for functional equivalence but may differ in minor details or optimizations.
+
+---
 
 ## Overview
 
 The Frankenstein optimizer aims to combine the advantages of various adaptive gradient-based methods. It dynamically adjusts its internal parameters based on the current state of the optimization process, potentially leading to faster convergence and improved generalization compared to optimizers like Adam or SGD in certain scenarios.
 
+---
+
 ## Key Features (based on the paper)
 
-*   **Adaptive First Momentum Coefficient (β₁):** Dynamically adjusts based on the learning rate, unlike the fixed β₁ in Adam.
-*   **Dynamic Second Moment EMA (β₂):** The coefficient β₂ for the exponential moving average of squared gradients adapts based on the ratio of current to past squared gradients and the alignment between momentum and current gradient.
-*   **Max-based Second Moment for Normalization (v̂):** Uses the maximum observed squared gradient (`v̂`, similar to AMSGrad) in the denominator for parameter updates, potentially offering more stability.
-*   **Nonlinear Misalignment Factor (P):** Quantifies the misalignment between the previous momentum direction and the current gradient direction.
-*   **Adaptive Coefficient (ρ):** Modulates the momentum update based on gradient magnitude and the misalignment factor `P`.
-*   **Acceleration Factor (ξ):** Adjusts the final parameter update based on gradient magnitude and the misalignment factor `P`, potentially accelerating convergence in consistent directions and stabilizing during rapid gradient changes.
+✨ Dynamically adapts its internal coefficients during training:
+
+*   **Adaptive First Momentum Coefficient (`β₁`):** Adjusts based on the learning rate, unlike the fixed `β₁` in Adam.
+*   **Dynamic Second Moment EMA (`β₂`):** Adapts based on the ratio of current to past squared gradients and the alignment between momentum and current gradient.
+*   **Max-based Second Moment Normalization (`v̂`):** Uses the maximum observed squared gradient (similar to AMSGrad) for parameter update normalization, potentially enhancing stability.
+
+✨ Incorporates novel factors for fine-grained control:
+
+*   **Nonlinear Misalignment Factor (`P`):** Quantifies the misalignment between the previous momentum and current gradient.
+*   **Adaptive Coefficient (`ρ`):** Modulates the momentum update based on gradient magnitude and the misalignment factor `P`.
+*   **Acceleration Factor (`ξ`):** Adjusts the final parameter update, potentially accelerating convergence in consistent directions and stabilizing during rapid changes.
+
+---
 
 ## Installation
 
-1.  Clone this repository:
+1.  **Clone the repository:**
     ```bash
     git clone https://github.com/sh77ma/frankensteinoptim
     cd frankensteinoptim
     ```
-2.  Ensure you have PyTorch installed (`torch >= 1.8` recommended, though might work with earlier versions).
-3.  Place the `frankenstein_optimizer.py` file in your project directory or a location accessible by your Python path.
 
-## Usage
+2.  **Ensure PyTorch is installed:**
+    Requires `torch >= 1.8` (might work with earlier versions). See [pytorch.org](https://pytorch.org/) for installation instructions.
 
-Import the optimizer and use it like any standard PyTorch optimizer:
+3.  **Import the optimizer:**
+    Place the `frankenstein_optimizer.py` file in your project directory or ensure it's in your Python path.
+
+---
+
+## Usage Example
+
+Import and use `Frankenstein` like any standard PyTorch optimizer.
 
 ```python
 import torch
 import torch.nn as nn
-from frankenstein_optimizer import Frankenstein # Assuming the file is in the same directory or accessible
+from frankenstein_optimizer import Frankenstein # Make sure the file is accessible
 
-# Define your model, loss function, dataloader
-model = nn.Linear(10, 1) # Example model
+# 1. Define your model, loss, and data
+model = nn.Linear(10, 1) # Example
 criterion = nn.MSELoss()
-data_loader = ... # Your DataLoader
+# data_loader = ... # Your DataLoader setup
 
-# Initialize the optimizer
-# Using default parameters:
-# optimizer = Frankenstein(model.parameters())
-# Or with custom parameters:
+# 2. Initialize the optimizer
+#    Use default parameters:
+#    optimizer = Frankenstein(model.parameters())
+#    Or customize:
 optimizer = Frankenstein(model.parameters(), lr=0.001, eps=1e-7)
 
-# Example training loop
+# 3. Standard Training Loop
 num_epochs = 10
 for epoch in range(num_epochs):
     model.train()
-    for inputs, targets in data_loader:
-        # inputs, targets = inputs.to(device), targets.to(device) # Move data to appropriate device
+    # for inputs, targets in data_loader: # Loop through your data
+    # Simulate some data for example:
+    inputs = torch.randn(4, 10)
+    targets = torch.randn(4, 1)
 
-        # Zero gradients
-        optimizer.zero_grad()
-
-        # Forward pass
-        outputs = model(inputs)
-        loss = criterion(outputs, targets)
-
-        # Backward pass
-        loss.backward()
-
-        # Optimizer step
-        optimizer.step()
+    # Standard PyTorch steps
+    optimizer.zero_grad()
+    outputs = model(inputs)
+    loss = criterion(outputs, targets)
+    loss.backward()
+    optimizer.step()
 
     print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
 
-    # Optional: Validation loop, saving checkpoints, etc.
+    # Add validation, saving, etc. as needed
     # ...
 ```
 Parameters
